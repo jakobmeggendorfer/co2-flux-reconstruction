@@ -1,2 +1,4 @@
 /data
 /env
+*.pkl
+*.DS_Store
