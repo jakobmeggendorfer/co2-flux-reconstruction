@@ -39,4 +39,11 @@ def assign_basins(nav_lat, nav_lon):
     else:
         return 'OTHER'
 
-data_df['basin_name'] = data_df.apply(lambda row: assign_basins(row['nav_lat'], row['nav_lon']), axis=1)
+# data_df['basin_name'] = data_df.apply(lambda row: assign_basins(row['nav_lat'], row['nav_lon']), axis=1)
+
+def get_pure_ocean_df(appended_data):        
+    zone_NORTH_ATLANTIC_PATCH= appended_data.loc[(appended_data['nav_lon'] >= -60.0) & (appended_data['nav_lon'] <= -30)]
+    zone_NORTH_ATLANTIC_PATCH = zone_NORTH_ATLANTIC_PATCH.loc[(zone_NORTH_ATLANTIC_PATCH['nav_lat'] >= 10) & (zone_NORTH_ATLANTIC_PATCH['nav_lat'] <= 41.7)]
+    zone_NORTH_ATLANTIC_PATCH['zone'] = 'NORTH_ATLANTIC'
+    
+    return zone_NORTH_ATLANTIC_PATCH
