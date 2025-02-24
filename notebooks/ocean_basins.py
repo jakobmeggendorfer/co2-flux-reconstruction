@@ -1,5 +1,37 @@
 import pandas as pd
 
+def build_grids(df_month,cell_width=2):
+    # Prepare the cells
+    nav_lat_grids = get_cell_range(start = -90, end = 90 ,cell_width = cell_width)
+    nav_lon_grids = get_cell_range(start = -180, end = 180 ,cell_width = cell_width)
+    
+    if nav_lat_grids[-1] != 90:
+        nav_lat_grids.append(90)
+        
+    if nav_lon_grids[-1] != 180:
+        nav_lon_grids.append(180)
+        
+    # Build the grids. Store in a list.
+    grids_df_lst=[]
+    for lat_i in range(len(nav_lat_grids)):
+        for lon_j in range(len(nav_lon_grids)):
+            if((nav_lat_grids[lat_i] == 90) or (nav_lon_grids[lon_j] == 180)):
+                break
+            elif ((lat_i == len(nav_lat_grids) - 1) or (lon_j == len(nav_lon_grids) - 1)):
+                break
+            else:
+                _df_ = df_month.loc[
+                    (df_month['nav_lat'] >= nav_lat_grids[lat_i]) & 
+                    (df_month['nav_lat'] <  nav_lat_grids[lat_i+1]) &
+                    (df_month['nav_lon'] >= nav_lon_grids[lon_j]) & 
+                    (df_month['nav_lon'] <  nav_lon_grids[lon_j+1])
+                                ]
+                grids_df_lst.append(_df_)
+    
+    print(f"\n Total no. of generated cells: {len(grids_df_lst)}")
+    
+    return grids_df_lst
+
 def get_zoned_df(appended_data):
     '''
     returns multiple dataframes corresponding to 4 different basins
