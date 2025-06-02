@@ -36,8 +36,6 @@ def plotAbsolute(dataframe, feature_to_plot):
     # Mask the data over land
     masked_data = np.ma.masked_where(grid_values == 0, grid_values)
 
-    m.drawparallels(range(-90, 91, 30), labels=[True, False, False, False], color="lightgrey")
-    m.drawmeridians(range(-180, 181, 60), labels=[False, False, False, True], color="lightgrey")
 
     x, y = m(lon_grid, lat_grid)
     pcm = m.pcolormesh( x, y, masked_data,  vmin='100', vmax='400', cmap='coolwarm', shading='auto', latlon=True)
@@ -47,7 +45,7 @@ def plotAbsolute(dataframe, feature_to_plot):
     plt.title(f"'Pre-industrial CO2 fugacity")
     plt.show()
 
-def plotMaeInPercent(dataframe, feature_to_plot):
+def plotMaeInPercent(dataframe):
    # Define map boundaries
     lat_min, lat_max = -77, 90
     lon_min, lon_max = -180, 180
@@ -95,10 +93,10 @@ def plotMaeInPercent(dataframe, feature_to_plot):
 def plotAbsolute_numpy(data, vmin=100, vmax=400, lat_min= -74.5, lat_max=74.5):
     # Define map boundaries
 
-    lon_min, lon_max = -179.5, 179.5
+    lon_min, lon_max = -180, 180
 
     # Create a grid
-    num_lat, num_lon = 150, 360  # Grid resolution
+    num_lat, num_lon = 180, 360  # Grid resolution
     lat_grid = np.linspace(lat_min, lat_max, num_lat)
     lon_grid = np.linspace(lon_min, lon_max, num_lon)
     lon_grid, lat_grid = np.meshgrid(lon_grid, lat_grid)
@@ -134,5 +132,46 @@ def plotAbsolute_numpy(data, vmin=100, vmax=400, lat_min= -74.5, lat_max=74.5):
     plt.title("Pre-industrial CO2 Fugacity")
     timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
     path = '../plots/u-net/' + timestamp + '_pae_map.png'
+    plt.savefig(path, format='png', dpi=300,  bbox_inches='tight') 
+    plt.close()
+
+
+def plot_feature_on_map(data, lower_lat_bound, upper_lat_bound, vmin, vmax, folder_path, file_name, title="Feature Map"):
+    """
+    Plots a feature from a 3D numpy array on a Basemap.
+
+    Parameters:
+    - data: 3D numpy array of shape (lat, lon, features)
+    - lower_lat_bound: float, lower latitude bound of the data
+    - upper_lat_bound: float, upper latitude bound of the data
+    - feature_index: int, index of the feature to plot
+    - title: str, title of the plot (optional)
+    - cmap: str, colormap to use (optional)
+    """
+    # Get latitude and longitude ranges
+    n_lat, n_lon = data.shape[0], data.shape[1]
+    lat_step = (upper_lat_bound - lower_lat_bound) / n_lat
+    lon_step = 360 / n_lon
+
+    lats = np.linspace(lower_lat_bound+lat_step/2, upper_lat_bound-lat_step/2, n_lat)
+    lons = np.linspace(-180+lon_step/2, 180-lon_step/2, n_lon)
+
+    # Meshgrid for plotting
+    lon_grid, lat_grid = np.meshgrid(lons, lats)
+
+    # Set up the map
+    fig, ax = plt.subplots(figsize=(18, 8))
+    m = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90,
+                llcrnrlon=-180, urcrnrlon=180, resolution='c', ax=ax)
+    m.drawcoastlines()
+
+    # Plot with pcolormesh
+    cs = m.pcolormesh(lon_grid, lat_grid, data, vmin=vmin, vmax=vmax,shading='auto', cmap='coolwarm', latlon=True)
+    m.fillcontinents(color='black')
+    # plt.colorbar(cs, label=f"")
+    plt.title(title)
+    plt.tight_layout()
+    timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
+    path = folder_path + '/' + timestamp + '_' + file_name + '.png'
     plt.savefig(path, format='png', dpi=300,  bbox_inches='tight') 
     plt.close()

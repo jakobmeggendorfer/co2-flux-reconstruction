@@ -5,16 +5,16 @@ from scipy.spatial import cKDTree
 def mapDataframeToGridClosest(df, feature_list):
     lower_long_bound = -180
     upper_long_bound = 180
-    lower_lat_bound = -75
-    upper_lat_bound = 75
-    resolution = 0.5
+    lower_lat_bound = -77
+    upper_lat_bound = 90
+    resolution = 1
     half_cell_width = resolution / 2
     num_long_cells = int((upper_long_bound - lower_long_bound) / resolution)
     num_lat_cells = int((upper_lat_bound - lower_lat_bound) / resolution)
 
     # Define grid dimensions
-    grid_lon = np.linspace(lower_long_bound+half_cell_width, upper_long_bound-half_cell_width, num_long_cells, endpoint=True)
-    grid_lat = np.linspace(lower_lat_bound+half_cell_width, upper_lat_bound-half_cell_width, num_lat_cells, endpoint=True) 
+    grid_lon = np.linspace(lower_long_bound + half_cell_width, upper_long_bound - half_cell_width, num_long_cells, endpoint=True)
+    grid_lat = np.linspace(lower_lat_bound + half_cell_width, upper_lat_bound - half_cell_width, num_lat_cells, endpoint=True) 
 
     # Mesh grid creation
     mesh_lon, mesh_lat = np.meshgrid(grid_lon, grid_lat)
