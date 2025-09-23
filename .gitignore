@@ -1,6 +1,7 @@
 /data
-/env
+/venv
 /plots
+/outputs
 
 # Byte-compiled / cache files
 __pycache__/
@@ -10,42 +11,6 @@ __pycache__/
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
 
-# Environment files
-.env
-.venv/
-venv/
-env/
-*.env
-
-# Data
-*.csv
-*.h5
-*.hdf5
-*.pkl
-*.npz
-*.npy
-*.tfrecord
-*.zip
-*.tar.gz
-*.log
-*.pkl
-*.DS_Store
-
-# Models
-*.ckpt
-*.pth
-*.pt
-*.h5
-*.pb
-
-# Output / results
-logs/
-runs/
-checkpoints/
-outputs/
-models/
-*.pdf
-*.png
 
 # OS files
 .DS_Store
