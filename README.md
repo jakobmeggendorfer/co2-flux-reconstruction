@@ -39,8 +39,7 @@ It provides tools for **data preprocessing, model training, and evaluation** on 
 ├── data/                    # (not included) raw & processed datasets
 ├── outputs/                 # (not included) Experiment outputs
 ├── requirements.txt
-├── README.md
-└── LICENSE
+└── README.md
 ```
 
 ---
