@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 import numpy as np
 
-def load_dataset(data_path, start_year=1958, end_year=2018):
+def load_dataset(data_path, start_year=1958, end_year=2018, target_index=3):
     """
     Loads features and targets from a single dataset folder.
     """
@@ -16,13 +16,11 @@ def load_dataset(data_path, start_year=1958, end_year=2018):
     features = np.stack([np.load(fp) for fp in feature_files])
     targets = np.stack([np.load(fp) for fp in target_files])
     
-    # use only co2flux (index 3)
-    targets = targets[..., 3]
+    targets = targets[..., target_index]
 
     return features, targets
 
-
-def load_and_interleave(start_year=1958, end_year=2018, datasets=["exp1", "exp3", "exp5"]):
+def load_and_interleave(start_year=1958, end_year=2018, datasets=["exp1", "exp3", "exp5"], target_index=3):
     """
     Loads multiple datasets and interleaves them in a round-robin fashion.
     """
@@ -30,7 +28,7 @@ def load_and_interleave(start_year=1958, end_year=2018, datasets=["exp1", "exp3"
     data_path_prefix = "../../data/preprocessed_"
     data_paths = [data_path_prefix + d for d in datasets]
 
-    features_list, targets_list = zip(*(load_dataset(path, start_year=start_year, end_year=end_year) for path in data_paths))
+    features_list, targets_list = zip(*(load_dataset(path, start_year=start_year, end_year=end_year, target_index=target_index  ) for path in data_paths))
     num_datasets = len(features_list)
     num_timesteps = features_list[0].shape[0]
 
@@ -43,7 +41,7 @@ def load_and_interleave(start_year=1958, end_year=2018, datasets=["exp1", "exp3"
 
     return features, targets
 
-def load_for_mlp(start_year=1958, end_year=2018, datasets=[]):
+def load_for_mlp(start_year=1958, end_year=2018, datasets=[], target_index=3):
     """
     Loads data and preprocesses it for MLP models.
 
@@ -55,15 +53,17 @@ def load_for_mlp(start_year=1958, end_year=2018, datasets=[]):
         Ending year of the data to load (inclusive).
     datasets : list of str    
         List of dataset identifiers to load.
+    target_index : int
+        Index of the target variable to extract (default is 3 for 'co2flux_pre')
 
     Returns
     -------
     features : np.ndarray
         Feature array of shape (num_samples, num_features)
     targets : np.ndarray
-        Target array of shape (num_samples, 1) containing only the 'co2flux' target.
+        Target array of shape (num_samples, 1)
     """
-    features, targets = load_and_interleave(start_year=start_year, end_year=end_year, datasets=datasets)
+    features, targets = load_and_interleave(start_year=start_year, end_year=end_year, datasets=datasets, target_index=target_index)
 
     features = features.reshape(-1, features.shape[-1])
     targets = targets.reshape(-1, 1)
@@ -88,7 +88,7 @@ def load_for_mlp(start_year=1958, end_year=2018, datasets=[]):
 
     return features, targets
 
-def load_as_maps(start_year=1958, end_year=2018, datasets=[]):
+def load_as_maps(start_year=1958, end_year=2018, datasets=[], target_index=3):
     """
     Loads data as maps.
 
@@ -100,15 +100,16 @@ def load_as_maps(start_year=1958, end_year=2018, datasets=[]):
         Ending year of the data to load (inclusive).
     datasets : list of str    
         List of dataset identifiers to load.
-        
+    target_index : int
+        Index of the target variable to extract (default is 3 for 'co2flux_pre')
     Returns
     -------
     features : np.ndarray
         Feature array of shape (num_samples, 167, 360, num_features)
     targets : np.ndarray
-        Target array of shape (num_samples, 167, 360) containing only the 'co2flux' target.
+        Target array of shape (num_samples, 167, 360)
     """
-    features, targets = load_and_interleave(start_year=start_year, end_year=end_year, datasets=datasets)
+    features, targets = load_and_interleave(start_year=start_year, end_year=end_year, datasets=datasets, target_index=target_index)
 
     mask = features[..., 11] == 0 
     # setting this feature to zero for land points because it had some random values

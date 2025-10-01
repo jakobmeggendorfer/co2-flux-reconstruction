@@ -8,10 +8,11 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error
 from utils.ocean_basins import get_region
 from utils.data_loader import load_as_maps, load_for_mlp
 from utils.plot_map import plot_map
+from models.swin_transformer import patch_extract, masked_mse_loss
 
 def plot_shap_over_time(model, X, mask, feature_names=None, 
                               bg_per_time=64, max_samples_per_time=None,
-                              batch_size=None, verbose=True, region_id='ARCTIC', type='TREND'):
+                              batch_size=None, verbose=True, region_id='ARCTIC', type='TREND', path='.'):
     """
     Parameters
     ----------
@@ -85,12 +86,16 @@ def plot_shap_over_time(model, X, mask, feature_names=None,
 
     months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
           "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    years = np.arange(1958, 1958+num_years)
     
     title = ''
     xlabel = ''
+    xseries = []
     
     if type == 'TREND':
         xlabel = "Year"
+        xseries = years
+
         match region_id:
             case "ARCTIC":
                 title = "Feature Importance Trend in the Arctic region"
@@ -102,6 +107,8 @@ def plot_shap_over_time(model, X, mask, feature_names=None,
                 title = "Feature Importance Trend in the Southern Ocean"
     else:
         xlabel = "Month"
+        xseries = months
+
         match region_id:
             case "ARCTIC":
                 title = "Seasonal Feature Importance in the Arctic region"
@@ -115,7 +122,7 @@ def plot_shap_over_time(model, X, mask, feature_names=None,
     # Plot 1
     plt.figure(figsize=(12, 6))
     for j, name in enumerate(feature_names[:6]):
-        plt.plot(months, mean_abs_shap[:, j], label=name)
+        plt.plot(xseries, mean_abs_shap[:, j], label=name)
 
     plt.xlabel(xlabel)
     plt.ylabel("Mean |SHAP value|")
@@ -127,12 +134,12 @@ def plot_shap_over_time(model, X, mask, feature_names=None,
     )
     plt.grid(True)
     plt.tight_layout()
-    plt.show()
+    plt.savefig(path+'/shap_' + type + '_' + region_id + '_1.png', format='png', dpi=300,  bbox_inches='tight')
 
     # Plot 2
     plt.figure(figsize=(12, 6))
     for j, name in enumerate(feature_names[6:]):
-        plt.plot(months, mean_abs_shap[:, 6+j], label=name)
+        plt.plot(xseries, mean_abs_shap[:, 6+j], label=name)
 
     plt.xlabel(xlabel)
     plt.ylabel("Mean |SHAP value|")
@@ -144,8 +151,7 @@ def plot_shap_over_time(model, X, mask, feature_names=None,
     )
     plt.grid(True)   
     plt.tight_layout()
-    # plt.savefig(path+'/yearly_' + region + '.png', format='png', dpi=300,  bbox_inches='tight')
-    plt.show()
+    plt.savefig(path+'/shap_' + type + '_' + region_id + '_2.png', format='png', dpi=300,  bbox_inches='tight')
 
     return mean_abs_shap, feature_names
 
@@ -159,20 +165,12 @@ def plot_timeseries_analysis(targets, predictions, region, path, start_year):
     yearly_target_mean = region_targets.mean(axis=(1, 2))
     yearly_pred_mean = region_pred.mean(axis=(1, 2))
 
-    # monthly std across years (±1σ band). Use ddof=1 for sample std if you prefer.
-    #targ_std = yearly_target_mean.std(axis=0, ddof=1)
-    #pred_std = yearly_pred_mean.std(axis=0, ddof=1)
-
     months = np.arange(T)
     years = start_year + months / 12
 
     plt.figure(figsize=(10, 5))
     plt.plot(years, yearly_target_mean, label='Target', color='blue')
     plt.plot(years, yearly_pred_mean, label='Prediction', color='orange')
-
-    # ±1σ shaded bands
-    #plt.fill_between(years, yearly_target_mean - targ_std, yearly_target_mean + targ_std, alpha=0.2, color='blue', label='Target ±1σ')
-    #plt.fill_between(years, yearly_pred_mean - pred_std, yearly_pred_mean + pred_std, alpha=0.2, color='orange', label='Prediction ±1σ')
 
     match region:
         case "ARCTIC":
@@ -202,8 +200,6 @@ def plot_seasonal_analysis(targets, predictions, region,path):
 
     targets_reshaped = region_targets.reshape(num_years, 12, H, W)
     pred_reshaped = region_pred.reshape(num_years, 12, H, W)
-    # yearly_pred_mean = pred_yearly.mean(axis=(0, 2, 3))
-    # yearly_target_mean = targets_yearly.mean(axis=(0, 2, 3))
 
     # monthly means per year: (years, months)
     targ_mean_per_year_month = targets_reshaped.mean(axis=(2, 3))
@@ -285,20 +281,22 @@ def plot_yearly_analysis(targets, predictions, region, path, start_year):
     plt.savefig(path+'/yearly_' + region + '.png', format='png', dpi=300,  bbox_inches='tight')
 
 
-def complete_model_analysis_map(model_path, dataset_id):
+def complete_model_analysis_map(model_path, dataset_id, target_index=3):
 
     # load model
     model = tf.keras.models.load_model(model_path + "/model.keras")
     
     # load and prepare data
-    X_test, Y_test = load_as_maps(start_year=2013, end_year=2018, datasets=[dataset_id])
-    map_mask = X_test[0,:,:, 11] == 1
+    X_test, Y_test = load_as_maps(start_year=2013, end_year=2018, datasets=[dataset_id],target_index=target_index)
+    map_mask = X_test[0,:,:, 10] == 1
 
     scaler = load(model_path + '/scaler.pkl')
     n_samples, h, w, n_features = X_test.shape
     X_test_flat = X_test.reshape(-1,n_features)
     X_test_scaled_flat = scaler.transform(X_test_flat)
     X_test = X_test_scaled_flat.reshape(n_samples, h, w, n_features)
+
+    # X_test = patch_extract(X_test, patch_size=(4,4))
 
     # run model and evalutate
     predictions = model.predict(X_test)
@@ -366,13 +364,13 @@ def complete_model_analysis_map(model_path, dataset_id):
     plot_yearly_analysis(Y_test, pred_masked, "EQ_PACIFIC", path, start_year)
     plot_yearly_analysis(Y_test, pred_masked, "SOUTHERN_OCEAN", path, start_year)
 
-def complete_model_analysis_mlp(model_path, dataset_id):
+def complete_model_analysis_mlp(model_path, dataset_id, target_index=3):
 
     # load model
     model = tf.keras.models.load_model(model_path + "/model.keras")
     
     # load and prepare data
-    X_test_flat, Y_test_flat = load_for_mlp(start_year=2013, end_year=2018, datasets=[dataset_id])
+    X_test_flat, Y_test_flat = load_for_mlp(start_year=2013, end_year=2018, datasets=[dataset_id], target_index=target_index)
 
     mask = X_test_flat[:, 10] == 1
     X_test_flat = np.delete(X_test_flat, [10], axis=1)
@@ -400,8 +398,8 @@ def complete_model_analysis_mlp(model_path, dataset_id):
 
     with open(model_path + "/model_evaluation.txt", "a") as f:
         f.write("Evaluation " + dataset_id + ":\n")
-        f.write(f"General MSE: {general_mse:.3f}\n")
-        f.write(f"General MAE: {general_mae:.3f}\n\n")
+        f.write(f"Global MSE: {general_mse:.3f}\n")
+        f.write(f"Global MAE: {general_mae:.3f}\n\n")
 
         regions = ['ARCTIC', 'NORTH_ATLANTIC', 'EQ_PACIFIC', 'SOUTHERN_OCEAN']
 
@@ -427,7 +425,7 @@ def complete_model_analysis_mlp(model_path, dataset_id):
     plot_map(data=mean_error, folder_path=model_path, title='Mean absolute error co2 flux pre reconstruction 2013 - 2018', file_name='mae_' + dataset_id,vmin=0, vmax=1, cmap='summer')
     plot_map(data=rmse, folder_path=model_path, title='Root mean squared error co2 flux pre reconstruction 2013 - 2018', file_name='rmse_' + dataset_id,vmin=0, vmax=1, cmap='summer')
 
-    start_year = 2013
+    start_year = 1958
 
     path = model_path + "/" + dataset_id
     if not os.path.exists(path):

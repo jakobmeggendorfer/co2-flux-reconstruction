@@ -36,9 +36,5 @@ def build_mlp(base_layer_size=256, dropout_rate=0.1, l2_reg=1e-6, lr=5e-4):
         tf.keras.layers.Dense(1, activation='linear')
     ])
 
-    model.compile(
-        optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
-        loss='mse',
-        metrics=['mae']
-    )
+ 
     return model
