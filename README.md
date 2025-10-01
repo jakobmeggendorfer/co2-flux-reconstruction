@@ -63,8 +63,6 @@ pip install -r requirements.txt
 
 ## Usage
 
-1. Preprocessing
-
 1. **Preprocessing**
    - Open `notebooks/preprocessing/regrid_and_store_to_numpy.ipynb`
    - Set variable `data_path` to the relative path of the folder that contains the pickle files
