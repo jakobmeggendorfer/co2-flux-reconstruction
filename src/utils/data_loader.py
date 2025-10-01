@@ -25,7 +25,7 @@ def load_and_interleave(start_year=1958, end_year=2018, datasets=["exp1", "exp3"
     Loads multiple datasets and interleaves them in a round-robin fashion.
     """
 
-    data_path_prefix = "../../data/preprocessed_"
+    data_path_prefix = "../../data/"
     data_paths = [data_path_prefix + d for d in datasets]
 
     features_list, targets_list = zip(*(load_dataset(path, start_year=start_year, end_year=end_year, target_index=target_index  ) for path in data_paths))
