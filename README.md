@@ -8,12 +8,9 @@ It provides tools for **data preprocessing, model training, and evaluation** on 
 ## Table of Contents
 
 - [Overview](#overview)
+- [Project Structure](#project-structure)
 - [Installation](#installation)
 - [Usage](#-usage)
-- [Project Structure](#project-structure)
-- [Experiments & Results](#-experiments--results)
-- [Contributing](#-contributing)
-- [License](#-license)
 - [Acknowledgements](#-acknowledgements)
 
 ---
@@ -24,26 +21,9 @@ It provides tools for **data preprocessing, model training, and evaluation** on 
 - **Approach**: This project applies various **deep learning architectures** (MLP, U-Net, U-Next and Swin Transformer) to reconstruct CO₂ fluxes.
 - **Data**: FOCI-MOPS v1 (1958–2018), downsampled to a **1°×1° global grid** with monthly resolution.
 - **Targets**: `fco2`, `fco2_pre`, `co2flux`, and `co2flux_pre`.
-
 ---
 
 ## Project Structure
-
-```bash
-# Clone repository
-git clone https://github.com/jakobmeggendorfer/co2-flux-reconstruction.git
-cd co2-flux-reconstruction
-
-# Create environment
-python -m venv venv
-source venv/bin/activate   # On Windows: venv\Scripts\activate
-
-# Install requirements
-pip install -r requirements.txt
-```
----
-
-## Installation
 
 ```bash
 ├── src/
@@ -62,3 +42,40 @@ pip install -r requirements.txt
 ├── README.md
 └── LICENSE
 ```
+
+---
+
+## Installation
+
+```bash
+# Clone repository
+git clone https://github.com/jakobmeggendorfer/co2-flux-reconstruction.git
+cd co2-flux-reconstruction
+
+# Create environment
+python -m venv venv
+source venv/bin/activate   # On Windows: venv\Scripts\activate
+
+# Install requirements
+pip install -r requirements.txt
+```
+---
+
+## Usage
+
+1. Preprocessing
+
+Open notebooks/preprocessing/regrid_and_store_to_numpy.ipynb
+Set variable `data_path` to relative path to folder that contain pickle files
+Set variable `file_prefix` to the prefix that is identical for each pickle file
+
+2. Run model training
+Go to notebooks/training and open respective model training notebook
+In the first cell after the imports, specify folder names of datasets inside the data folder and optionally specify other variables in that cell.
+Run remaining cels inside the notebook.
+
+3. Check results
+When the notebook is done, you find a folder for your training run in the output folder. This folder contains the scaler, the trained model and all evalutaions that were performed automatically.
+---
+
+## Acknowledgements
