@@ -10,7 +10,7 @@ It provides tools for **data preprocessing, model training, and evaluation** on 
 - [Overview](#overview)
 - [Installation](#installation)
 - [Usage](#-usage)
-- [Project Structure](#project structure)
+- [Project Structure](#project-structure)
 - [Experiments & Results](#-experiments--results)
 - [Contributing](#-contributing)
 - [License](#-license)
