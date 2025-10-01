@@ -7,10 +7,10 @@ It provides tools for **data preprocessing, model training, and evaluation** on 
 
 ## Table of Contents
 
-- [Overview](#-overview)
-- [Installation](#-installation)
+- [Overview](#overview)
+- [Installation](#installation)
 - [Usage](#-usage)
-- [Project Structure](#-project-structure)
+- [Project Structure](#project structure)
 - [Experiments & Results](#-experiments--results)
 - [Contributing](#-contributing)
 - [License](#-license)
@@ -27,9 +27,9 @@ It provides tools for **data preprocessing, model training, and evaluation** on 
 
 ---
 
-## Installation
+## Project Structure
 
-````bash
+```bash
 # Clone repository
 git clone https://github.com/jakobmeggendorfer/co2-flux-reconstruction.git
 cd co2-flux-reconstruction
@@ -40,6 +40,10 @@ source venv/bin/activate   # On Windows: venv\Scripts\activate
 
 # Install requirements
 pip install -r requirements.txt
+```
+---
+
+## Installation
 
 ```bash
 ├── src/
@@ -57,4 +61,4 @@ pip install -r requirements.txt
 ├── requirements.txt
 ├── README.md
 └── LICENSE
-````
+```
