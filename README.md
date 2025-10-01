@@ -31,8 +31,8 @@ It provides tools for **data preprocessing, model training, and evaluation** on 
 
 ````bash
 # Clone repository
-git clone https://github.com/yourusername/your-repo-name.git
-cd your-repo-name
+git clone https://github.com/jakobmeggendorfer/co2-flux-reconstruction.git
+cd co2-flux-reconstruction
 
 # Create environment
 python -m venv venv
@@ -43,13 +43,17 @@ pip install -r requirements.txt
 
 ```bash
 ├── src/
-│   ├── preprocessing/       # Data preparation scripts
-│   ├── models/              # Model architectures (MLP, CNN, LSTM, UNext, etc.)
-│   ├── training/            # Training scripts
-│   ├── utils/               # Evaluation & visualization utilities
+│   ├── models/              # Model architectures (MLP, U-Net, UNext, SwinTransformer)
+│   ├── utils/               # Preprocessing & evaluation utilities
 │
+├── notebooks/               
+│   ├── optuna/              # Notebooks to run hyperparameter optimization
+│   ├── plots/               # Notebooks to generate plots
+│   ├── preprocessing/       # Notebook to preprocess datasets
+│   ├── training/            # Notebooks to train different models
+│   ├── other/               # Preprocessing & evaluation utilities
 ├── data/                    # (not included) raw & processed datasets
-├── results/                 # Experiment outputs
+├── outputs/                 # (not included) Experiment outputs
 ├── requirements.txt
 ├── README.md
 └── LICENSE
