@@ -66,13 +66,16 @@ pip install -r requirements.txt
    - Open `notebooks/preprocessing/regrid_and_store_to_numpy.ipynb`
    - Set variable `data_path` to the relative path of the folder that contains the pickle files
    - Set variable `file_prefix` to the prefix that is identical for each pickle file
+   - Set variable `dataset_id` to the id that you want to use for this experiment. It will be used as the name of teh folder which contains the preprocessed data for this experiment.
+   - It is expected that the source files are matching with the following naming scheme {file_prefix}{year}_df.pkl, where year ranges from 1958 to 2018.
+   - Run all cells in this notebook.
 
 2. **Run model training**
    - Go to `notebooks/training` and open the respective model training notebook
    - In the first cell (after the imports):
      - Specify folder names of datasets inside the `data/` folder
      - Optionally specify other variables in that cell
-   - Run the remaining cells in the notebook
+   - Run all cells in this notebook.
 
 3. **Check results**
    - After training, you will find a folder for your run in the `output/` directory
