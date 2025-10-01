@@ -102,3 +102,21 @@ def get_region(data, region):
             return data[:,:32,:]
         
     return data
+
+def get_region_mask(region: str) -> np.ndarray:
+    mask = np.zeros((167, 360))
+
+    match region:
+        case "ARCTIC":
+            mask[147:, :] = 1
+        case "NORTH_ATLANTIC":
+            mask[87:147, 15:180] = 1
+        case "EQ_PACIFIC":
+            mask[67:87, 0:80] = 1
+            mask[67:87, 195:] = 1
+        case "SOUTHERN_OCEAN":
+            mask[:32, :] = 1
+        case _:
+            mask[:, :] = 1  
+
+    return mask

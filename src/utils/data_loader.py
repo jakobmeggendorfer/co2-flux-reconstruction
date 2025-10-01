@@ -43,7 +43,7 @@ def load_and_interleave(start_year=1958, end_year=2018, datasets=["exp1", "exp3"
 
     return features, targets
 
-def load_for_mlp(start_year=1958, end_year=2018, datasets=["exp1", "exp3", "exp5"]):
+def load_for_mlp(start_year=1958, end_year=2018, datasets=[]):
     """
     Loads data and preprocesses it for MLP models.
 
@@ -88,7 +88,7 @@ def load_for_mlp(start_year=1958, end_year=2018, datasets=["exp1", "exp3", "exp5
 
     return features, targets
 
-def load_as_maps(start_year=1958, end_year=2018, datasets=["exp1", "exp3", "exp5"]):
+def load_as_maps(start_year=1958, end_year=2018, datasets=[]):
     """
     Loads data as maps.
 
