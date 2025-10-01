@@ -65,17 +65,24 @@ pip install -r requirements.txt
 
 1. Preprocessing
 
-Open notebooks/preprocessing/regrid_and_store_to_numpy.ipynb
-Set variable `data_path` to relative path to folder that contain pickle files
-Set variable `file_prefix` to the prefix that is identical for each pickle file
+1. **Preprocessing**
+   - Open `notebooks/preprocessing/regrid_and_store_to_numpy.ipynb`
+   - Set variable `data_path` to the relative path of the folder that contains the pickle files
+   - Set variable `file_prefix` to the prefix that is identical for each pickle file
 
-2. Run model training
-Go to notebooks/training and open respective model training notebook
-In the first cell after the imports, specify folder names of datasets inside the data folder and optionally specify other variables in that cell.
-Run remaining cels inside the notebook.
+2. **Run model training**
+   - Go to `notebooks/training` and open the respective model training notebook
+   - In the first cell (after the imports):
+     - Specify folder names of datasets inside the `data/` folder
+     - Optionally specify other variables in that cell
+   - Run the remaining cells in the notebook
 
-3. Check results
-When the notebook is done, you find a folder for your training run in the output folder. This folder contains the scaler, the trained model and all evalutaions that were performed automatically.
+3. **Check results**
+   - After training, you will find a folder for your run in the `output/` directory
+   - This folder contains:
+     - The scaler
+     - The trained model
+     - All evaluations that were performed automatically
 ---
 
 ## Acknowledgements
